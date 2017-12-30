@@ -1,0 +1,15 @@
+{
+  "name": "sentry-source-maps-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Automatically upload source maps to Sentry during Webpack build.",
+  "main": "index.js",
+  "repository": "https://github.com/SectorLabs/sentry-source-maps-webpack-plugin.git",
+  "author": "Swen Kooij <swen@sectorlabs.ro>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "form-data": "^2.3.1",
+    "node-fetch": "^1.7.3",
+    "webpack": "^3.10.0"
+  }
+}
