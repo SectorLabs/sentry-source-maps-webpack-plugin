@@ -94,6 +94,11 @@ function SentrySourceMapPlugin(options) {
  */
 SentrySourceMapPlugin.prototype.apply = function(compiler) {
     compiler.plugin('after-emit', (compilation, callback) => {
+        // don't run if the user wants this disabled
+        if (this.options.enabled === false) {
+            return callback();
+        }
+
         const isJSFileOrMap = fileName =>
             fileName.endsWith('.js') || fileName.endsWith('.map');
 
