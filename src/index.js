@@ -49,15 +49,11 @@ class Sentry {
     /**
      * Uploads a file as part of a release.
      */
-    uploadFile(version, filePath, name) {
+    uploadFile(version, filePath, publicPath, name) {
         const form = new FormData();
         form.append('file', fs.createReadStream(filePath));
-        form.append('name', name);
-
-        // create a link to the source map if this is not a source map itself
-        if (!name.endsWith('.map')) {
-            form.append('header', `Sourcemap:${name}.map`);
-        }
+        form.append('name', `~${path.join(publicPath, name)}`);
+        form.append('header', `Sourcemap:${name}.map`);
 
         return this.request(
             'POST',
@@ -109,7 +105,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                 files,
                 _.pick(
                     compilation.assets,
-                    Object.keys(chunk.files).filter(isJSFileOrMap),
+                    chunk.files.filter(isJSFileOrMap),
                 ),
             );
         });
@@ -127,7 +123,8 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                         this.sentry.uploadFile(
                             this.options.version,
                             files[fileName].existsAt,
-                            `~${path.join(publicPath, fileName)}`,
+                            publicPath,
+                            fileName,
                         ),
                     ),
                 ),
