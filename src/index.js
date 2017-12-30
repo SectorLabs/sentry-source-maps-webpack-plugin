@@ -88,7 +88,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                         this.sentry.uploadSourceMap(
                             this.options.version,
                             sourceMaps[fileName].existsAt,
-                            fileNae, // TODO: maybe combine this with publicPath
+                            fileName, // TODO: maybe combine this with publicPath
                         ),
                     ),
                 ),
