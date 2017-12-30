@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
+const _ = require('lodash');
 
 /**
  * Thin wrapper over the Sentry.io API.
@@ -14,7 +15,7 @@ class Sentry {
     /**
      * Makes a POST request at the specified path.
      */
-    request(path, body, headers = {}) {
+    request(method, path, body, headers = {}) {
         let url = `https://sentry.io/api/0/projects/${this.options.org}/${
             this.options.project
         }`;
@@ -26,7 +27,7 @@ class Sentry {
         };
 
         const requestOptions = {
-            method: 'POST',
+            method: method,
             headers: Object.assign({}, requestHeaders, headers || {}),
             body: body,
         };
@@ -38,7 +39,11 @@ class Sentry {
      * Creates a new release with the specified version number.
      */
     createRelease(version) {
-        return this.request('/releases/', JSON.stringify({ version: version }));
+        return this.request(
+            'POST',
+            '/releases/',
+            JSON.stringify({ version: version }),
+        );
     }
 
     /**
@@ -55,6 +60,7 @@ class Sentry {
         }
 
         return this.request(
+            'POST',
             `/releases/${version}/files/`,
             form,
             form.getHeaders(),
@@ -65,7 +71,16 @@ class Sentry {
      * Finalizes a release with the specified version number.
      */
     finalizeRelease(version) {
-        return this.request(`/releases/${version}/deploy`, JSON.stringify({}));
+        const body = {
+            projects: [this.options.project],
+            dateReleased: new Date().toISOString(),
+        };
+
+        return this.request(
+            'PUT',
+            `/releases/${version}/`,
+            JSON.stringify(body),
+        );
     }
 }
 
@@ -83,18 +98,20 @@ function SentrySourceMapPlugin(options) {
  */
 SentrySourceMapPlugin.prototype.apply = function(compiler) {
     compiler.plugin('after-emit', (compilation, callback) => {
+        const isJSFileOrMap = fileName =>
+            fileName.endsWith('.js') || fileName.endsWith('.map');
+
         // iterate over all chunks and find all JS files that
         // were emitted during the build
         const files = {};
         compilation.chunks.forEach(chunk => {
-            chunk.files
-                .filter(
-                    fileName =>
-                        fileName.endsWith('.js') || fileName.endsWith('.map'),
-                )
-                .forEach(fileName => {
-                    files[fileName] = compilation.assets[fileName];
-                });
+            Object.assign(
+                files,
+                _.pick(
+                    compilation.assets,
+                    Object.keys(chunk.files).filter(isJSFileOrMap),
+                ),
+            );
         });
 
         const publicPath = compilation.options.output.publicPath;
