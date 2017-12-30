@@ -5,7 +5,12 @@
 This Webpack plugin automatically uploads source maps generated during the build to Sentry.io.
 
 ## Why not use the official plugin?
-The [sentry-webpack-plugin](https://github.com/getsentry/sentry-webpack-plugin) doesn't allow configuration through the Webpack plugin itself or environment variables. It also pulls in a native binary (Sentry CLI) in order to do the uploading.
+The [sentry-webpack-plugin](https://github.com/getsentry/sentry-webpack-plugin) doesn't allow configuration through the Webpack plugin itself or environment variables. 
+
+There are a couple of other reasons to use this plugin over the official one:
+
+* Use the `publicPath` from your Webpack configuration rather than assuming `/`.
+* Override the `publicPath` per file (useful for Node.JS code).
 
 ## Installation
 
@@ -28,6 +33,12 @@ The [sentry-webpack-plugin](https://github.com/getsentry/sentry-webpack-plugin) 
                     project: 'my-project',
                     authToken: 'sentry auth token',
                     version: '1.0',
+
+                    // not required
+                    publicPaths: {
+                        'server.js': '/',
+                        'server.js.map': '/',
+                    },
                 }),
             ]
         };

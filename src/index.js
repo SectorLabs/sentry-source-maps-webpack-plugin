@@ -123,7 +123,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                         this.sentry.uploadFile(
                             this.options.version,
                             files[fileName].existsAt,
-                            publicPath,
+                            this.options.publicPaths[fileName] || publicPath,
                             fileName,
                         ),
                     ),
