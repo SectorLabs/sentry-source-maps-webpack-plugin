@@ -39,11 +39,23 @@ class Sentry {
      * Creates a new release with the specified version number.
      */
     createRelease(version) {
-        return this.request(
-            'POST',
-            '/releases/',
-            JSON.stringify({ version: version }),
-        );
+        const body = {
+            version: version,
+        };
+
+        if (this.options.ref) {
+            body.ref = this.options.ref;
+        }
+
+        if (this.options.refs) {
+            body.refs = this.options.refs;
+        }
+
+        if (this.options.commits) {
+            body.commits = this.options.commit;
+        }
+
+        return this.request('POST', '/releases/', JSON.stringify(body));
     }
 
     /**
@@ -108,10 +120,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
         compilation.chunks.forEach(chunk => {
             Object.assign(
                 files,
-                _.pick(
-                    compilation.assets,
-                    chunk.files.filter(isJSFileOrMap),
-                ),
+                _.pick(compilation.assets, chunk.files.filter(isJSFileOrMap)),
             );
         });
 
