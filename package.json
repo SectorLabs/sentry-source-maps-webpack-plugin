@@ -7,9 +7,13 @@
   "author": "Swen Kooij <swen@sectorlabs.ro>",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "format": "prettier --config .prettier.js.json --write 'src/**/*.js'"
+  },
   "dependencies": {
     "form-data": "^2.3.1",
     "node-fetch": "^1.7.3",
+    "prettier": "^1.9.2",
     "webpack": "^3.10.0"
   }
 }
