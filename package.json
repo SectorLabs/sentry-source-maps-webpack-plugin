@@ -1,6 +1,6 @@
 {
   "name": "sentry-source-maps-webpack-plugin",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Automatically upload source maps to Sentry during Webpack build.",
   "main": "src/index.js",
   "repository": "https://github.com/SectorLabs/sentry-source-maps-webpack-plugin.git",
