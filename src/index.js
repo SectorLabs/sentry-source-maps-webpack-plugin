@@ -105,7 +105,7 @@ function SentrySourceMapPlugin(options) {
  * Discovers all emitted source maps and uploads them to Sentry.io.
  */
 SentrySourceMapPlugin.prototype.apply = function(compiler) {
-    compiler.plugin('after-emit', (compilation, callback) => {
+    compiler.hooks.afterEmit.tapAsync('SentrySourceMapPlugin', (compilation, callback) => {
         // don't run if the user wants this disabled
         if (this.options.enabled === false) {
             return callback();
