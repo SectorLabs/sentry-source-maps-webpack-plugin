@@ -30,8 +30,8 @@ class Sentry {
             method: method,
             headers: Object.assign({}, requestHeaders, headers || {}),
             body: body,
-	    retries: 5,
-	    retryDetail: 1000,
+            retries: this.options.retries || 5,
+            retryDetail: this.options.timeout || 1000,
         };
 
         return fetch(url, requestOptions).then(response => response.json());
