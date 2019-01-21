@@ -136,14 +136,19 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
             .then(() =>
                 Promise.all(
                     Object.keys(files).map(fileName =>
-                        this.sentry.uploadFile(
-                            this.options.version,
-                            files[fileName].existsAt,
-                            this.options.publicPaths[fileName] || publicPath,
-                            fileName,
-                        ).catch((error) => compilation.warnings.push(
-			    `\Failed to upload source maps for: ${fileName}`
-			))
+                        this.sentry
+                            .uploadFile(
+                                this.options.version,
+                                files[fileName].existsAt,
+                                this.options.publicPaths[fileName] ||
+                                    publicPath,
+                                fileName,
+                            )
+                            .catch(error =>
+                                compilation.warnings.push(
+                                    `\nFailed to upload source maps for: ${fileName}.\n\n${error.stack.toString()}`,
+                                ),
+                            ),
                     ),
                 ),
             )
