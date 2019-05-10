@@ -36,6 +36,8 @@ There are a couple of other reasons to use this plugin over the official one:
                     version: '1.0',
 
                     // not required
+                    retries: 5,
+                    timeout: 1000,
                     publicPaths: {
                         'server.js': '/',
                         'server.js.map': '/',
