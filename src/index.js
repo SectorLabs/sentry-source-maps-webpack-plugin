@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
+const fetch = require('fetch-retry');
 const FormData = require('form-data');
 const _ = require('lodash');
 
@@ -30,6 +30,8 @@ class Sentry {
             method: method,
             headers: Object.assign({}, requestHeaders, headers || {}),
             body: body,
+            retries: this.options.retries || 5,
+            retryDetail: this.options.timeout || 1000,
         };
 
         return fetch(url, requestOptions).then(response => response.json());
@@ -134,12 +136,19 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
             .then(() =>
                 Promise.all(
                     Object.keys(files).map(fileName =>
-                        this.sentry.uploadFile(
-                            this.options.version,
-                            files[fileName].existsAt,
-                            this.options.publicPaths[fileName] || publicPath,
-                            fileName,
-                        ),
+                        this.sentry
+                            .uploadFile(
+                                this.options.version,
+                                files[fileName].existsAt,
+                                this.options.publicPaths[fileName] ||
+                                    publicPath,
+                                fileName,
+                            )
+                            .catch(error =>
+                                compilation.warnings.push(
+                                    `\nFailed to upload source maps for: ${fileName}.\n\n${error.stack.toString()}`,
+                                ),
+                            ),
                     ),
                 ),
             )
