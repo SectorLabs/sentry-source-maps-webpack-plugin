@@ -16,9 +16,7 @@ class Sentry {
      * Makes a POST request at the specified path.
      */
     request(method, path, body, headers = {}) {
-        let url = `https://sentry.io/api/0/projects/${this.options.org}/${
-            this.options.project
-        }`;
+        let url = `https://sentry.io/api/0/projects/${this.options.org}/${this.options.project}`;
         url += path;
 
         const requestHeaders = {
@@ -34,7 +32,7 @@ class Sentry {
             retryDetail: this.options.timeout || 1000,
         };
 
-        return fetch(url, requestOptions).then(response => response.json());
+        return fetch(url, requestOptions).then((response) => response.json());
     }
 
     /**
@@ -106,20 +104,20 @@ function SentrySourceMapPlugin(options) {
 /**
  * Discovers all emitted source maps and uploads them to Sentry.io.
  */
-SentrySourceMapPlugin.prototype.apply = function(compiler) {
+SentrySourceMapPlugin.prototype.apply = function (compiler) {
     const afterEmit = (compilation, callback) => {
         // don't run if the user wants this disabled
         if (this.options.enabled === false) {
             return callback();
         }
 
-        const isJSFileOrMap = fileName =>
+        const isJSFileOrMap = (fileName) =>
             fileName.endsWith('.js') || fileName.endsWith('.map');
 
         // iterate over all chunks and find all JS files that
         // were emitted during the build
         const files = {};
-        compilation.chunks.forEach(chunk => {
+        compilation.chunks.forEach((chunk) => {
             Object.assign(
                 files,
                 _.pick(compilation.assets, chunk.files.filter(isJSFileOrMap)),
@@ -135,7 +133,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
             // upload all the files we found
             .then(() =>
                 Promise.all(
-                    Object.keys(files).map(fileName =>
+                    Object.keys(files).map((fileName) =>
                         this.sentry
                             .uploadFile(
                                 this.options.version,
@@ -144,7 +142,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                                     publicPath,
                                 fileName,
                             )
-                            .catch(error =>
+                            .catch((error) =>
                                 compilation.warnings.push(
                                     `\nFailed to upload source maps for: ${fileName}.\n\n${error.stack.toString()}`,
                                 ),
@@ -160,7 +158,7 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
             .then(() => callback())
 
             // catch any error that occurred
-            .catch(error => {
+            .catch((error) => {
                 compilation.errors.push(
                     `\nFailed to upload source maps: \n\n${error.stack.toString()}`,
                 );
