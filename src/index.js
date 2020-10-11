@@ -107,7 +107,7 @@ function SentrySourceMapPlugin(options) {
  * Discovers all emitted source maps and uploads them to Sentry.io.
  */
 SentrySourceMapPlugin.prototype.apply = function(compiler) {
-    compiler.plugin('after-emit', (compilation, callback) => {
+    const afterEmit = (compilation, callback) => {
         // don't run if the user wants this disabled
         if (this.options.enabled === false) {
             return callback();
@@ -166,7 +166,13 @@ SentrySourceMapPlugin.prototype.apply = function(compiler) {
                 );
                 return callback();
             });
-    });
+    };
+
+    if (compiler.hooks) {
+        compiler.hooks.afterEmit.tapAsync('SentrySourceMapPlugin', afterEmit);
+    } else {
+        compiler.plugin('after-emit', afterEmit);
+    }
 };
 
 module.exports = SentrySourceMapPlugin;
