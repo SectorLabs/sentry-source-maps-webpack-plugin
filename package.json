@@ -11,13 +11,13 @@
     "format": "prettier --config .prettier.js.json --write 'src/**/*.js'"
   },
   "dependencies": {
-    "fetch-retry": "^2.1.0",
-    "form-data": "^2.3.3",
-    "lodash": "^4.17.11",
-    "node-fetch": "^2.5.0"
+    "fetch-retry": "^2.2.3",
+    "form-data": "^2.5.1",
+    "lodash": "^4.17.20",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "prettier": "^2.1.2",
-    "webpack": "^5.0.0"
+    "webpack": "^5.2.0"
   }
 }
