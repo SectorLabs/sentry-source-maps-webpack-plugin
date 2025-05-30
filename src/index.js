@@ -120,7 +120,10 @@ SentrySourceMapPlugin.prototype.apply = function (compiler) {
         compilation.chunks.forEach((chunk) => {
             Object.assign(
                 files,
-                _.pick(compilation.assets, chunk.files.filter(isJSFileOrMap)),
+                _.pick(
+                    compilation.assets,
+                    [...chunk.files].filter(isJSFileOrMap),
+                ),
             );
         });
 
@@ -137,7 +140,7 @@ SentrySourceMapPlugin.prototype.apply = function (compiler) {
                         this.sentry
                             .uploadFile(
                                 this.options.version,
-                                files[fileName].existsAt,
+                                compiler.options.output.path,
                                 this.options.publicPaths[fileName] ||
                                     publicPath,
                                 fileName,

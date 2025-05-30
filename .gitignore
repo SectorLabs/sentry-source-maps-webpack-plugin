@@ -1,2 +1,3 @@
 # Ignore installed modules
 node_modules/
+.idea
